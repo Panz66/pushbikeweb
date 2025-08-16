@@ -8,16 +8,16 @@ export const api = axios.create({
   },
 });
 
-export const getUser = () => api.get<UserType[]>('/user');
+export const getUsers = () => api.get<UserType[]>('/users');
 
 export const getUserById = (id_pendaftaran: number) =>
-  api.get<UserType>(`/user/${id_pendaftaran}`);
+  api.get<UserType>(`/users/${id_pendaftaran}`);
 
 export const createUser = (data: UserType) =>
-  api.post('/user', data);
+  api.post('/users', data);
 
-export const updateUser = (id_pendaftaran: string, data: UserType) =>
-  api.put(`/user/${id_pendaftaran}`, data);
+export const updateUser = (id_pendaftaran: number, data: UserType) =>
+  api.put(`/users/${id_pendaftaran}`, data);
 
 export const deleteUser = (id_pendaftaran: number) =>
-  api.delete(`/user/${id_pendaftaran}`);
+  api.delete(`/users/${id_pendaftaran}`);

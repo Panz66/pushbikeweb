@@ -1,6 +1,6 @@
 // src/components/pages/LiveResult/ResultList.tsx
 import { useEffect, useState, useMemo } from "react";
-import { getUser } from "@/services/api"; // ganti sesuai api kamu
+import { getUsers } from "@/services/api"; // ganti sesuai api kamu
 import type { UserType } from "@/types/users";
 
 export default function ResultList() {
@@ -9,7 +9,7 @@ export default function ResultList() {
   const itemsPerPage = 10;
 
   useEffect(() => {
-    getUser()
+    getUsers()
       .then((res) => setData(res.data as UserType[]))
       .catch(() => alert("Gagal mengambil data peserta"));
   }, []);
