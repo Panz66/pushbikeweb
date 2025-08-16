@@ -1,23 +1,25 @@
 /* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-import { IsString, IsNumber, IsEmail } from 'class-validator';
+import { IsString, IsInt, IsOptional } from 'class-validator';
 
 export class CreateUserDto {
-  @IsNumber({}, { message: 'No pendaftaran diisi  otomatis' })
-  pendaftaran: number;
+  @IsOptional()
+  @IsInt({ message: 'ID pendaftaran diisi otomatis oleh sistem' })
+  id_pendaftaran?: number;
 
-  @IsString({ message: 'Nama tidak boleh kosong ' })
+  @IsString({ message: 'Nama tidak boleh kosong' })
   nama: string;
 
-  @IsString({ message: 'Plat berupa teks huruf dan angka ' })
+  @IsString({ message: 'Plat berupa kombinasi huruf dan angka' })
   plat_number: string;
 
-  @IsString({ message: 'Comunnity berupa teks ' })
-  comunnity: string;
+  @IsString({ message: 'Community berupa teks' })
+  community: string;
 
-  @IsEmail({}, { message: 'harus berisi format email ' })
-  email: string;
+  @IsOptional()
+  @IsInt({ message: 'Point1 diisi admin' })
+  point1?: number;
 
-  @IsNumber({}, { message: 'point diisi admin' })
-  point: number;
+  @IsOptional()
+  @IsInt({ message: 'Point2 diisi admin' })
+  point2?: number;
 }

@@ -7,15 +7,16 @@ import { UpdateUserDto } from './dto/update-user.dto';
 @Injectable()
 export class UsersService {
   private data: User[] = [];
+  private counter = 1; // auto increment ID pendaftaran
 
   create(dto: CreateUserDto): User {
     const newUser = new User(
-      dto.pendaftaran,
+      dto.id_pendaftaran ?? this.counter++, // auto-generate jika tidak dikirim
       dto.nama,
       dto.plat_number,
-      dto.comunnity,
-      dto.email,
-      dto.point,
+      dto.community,
+      dto.point1 ?? 0,
+      dto.point2 ?? 0,
     );
     this.data.push(newUser);
     return newUser;
@@ -25,39 +26,31 @@ export class UsersService {
     return this.data;
   }
 
-  findOne(pendaftaran: number): User | undefined {
-    return this.data.find((m) => m.pendaftaran === pendaftaran);
+  findOne(id_pendaftaran: number): User | undefined {
+    return this.data.find((m) => m.id_pendaftaran === id_pendaftaran);
   }
 
-  update(pendaftaran: number, dto: UpdateUserDto): User | null {
-    if (
-      !dto.pendaftaran ||
-      !dto.nama ||
-      !dto.plat_number ||
-      !dto.comunnity ||
-      !dto.email ||
-      !dto.point
-    ) {
-      throw new Error('Semua field wajib diisi untuk update');
-    }
-
-    const index = this.data.findIndex((m) => m.pendaftaran === pendaftaran);
+  update(id_pendaftaran: number, dto: UpdateUserDto): User | null {
+    const index = this.data.findIndex((m) => m.id_pendaftaran === id_pendaftaran);
     if (index === -1) return null;
 
-    const updated = new User(
-      dto.pendaftaran,
-      dto.nama,
-      dto.plat_number,
-      dto.comunnity,
-      dto.email,
-      dto.point,
+    const user = this.data[index];
+
+    // update hanya field yang dikirim
+    this.data[index] = new User(
+      dto.id_pendaftaran ?? user.id_pendaftaran,
+      dto.nama ?? user.nama,
+      dto.plat_number ?? user.plat_number,
+      dto.community ?? user.community,
+      dto.point1 ?? user.point1,
+      dto.point2 ?? user.point2,
     );
-    this.data[index] = updated;
-    return updated;
+
+    return this.data[index];
   }
 
-  remove(pendaftaran: number): User | null {
-    const index = this.data.findIndex((m) => m.pendaftaran === pendaftaran);
+  remove(id_pendaftaran: number): User | null {
+    const index = this.data.findIndex((m) => m.id_pendaftaran === id_pendaftaran);
     if (index === -1) return null;
 
     const deleted = this.data[index];

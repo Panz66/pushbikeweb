@@ -23,12 +23,12 @@ export class UsersController {
     return this.service.findAll();
   }
 
-  @Get(':pendaftaran')
-  findOne(@Param('pendaftaran') pendaftaran: number) {
-    const user = this.service.findOne(+pendaftaran);
+  @Get(':id_pendaftaran')
+  findOne(@Param('id_pendaftaran') id_pendaftaran: number) {
+    const user = this.service.findOne(+id_pendaftaran);
     if (!user) {
       throw new NotFoundException(
-        `User dengan nomor pendaftaran ${pendaftaran} tidak ditemukan`,
+        `User dengan nomor id_pendaftaran ${id_pendaftaran} tidak ditemukan`,
       );
     }
     return user;
@@ -39,16 +39,16 @@ export class UsersController {
     return this.service.create(dto);
   }
 
-  @Put(':pendaftaran')
+  @Put(':id_pendaftaran')
   update(
-    @Param('pendaftaran') pendaftaran: number,
+    @Param('id_pendaftaran') id_pendaftaran: number,
     @Body() dto: UpdateUserDto,
   ) {
     try {
-      const updated = this.service.update(+pendaftaran, dto);
+      const updated = this.service.update(+id_pendaftaran, dto);
       if (!updated) {
         throw new NotFoundException(
-          `User dengan nomor pendaftaran ${pendaftaran} tidak ditemukan`,
+          `User dengan nomor id_pendaftaran ${id_pendaftaran} tidak ditemukan`,
         );
       }
       return updated;
@@ -60,12 +60,12 @@ export class UsersController {
     }
   }
 
-  @Delete(':pendaftaran')
-  remove(@Param('pendaftaran') pendaftaran: number) {
-    const deleted = this.service.remove(+pendaftaran);
+  @Delete(':id_pendaftaran')
+  remove(@Param('id_pendaftaran') id_pendaftaran: number) {
+    const deleted = this.service.remove(+id_pendaftaran);
     if (!deleted) {
       throw new NotFoundException(
-        `User dengan nomor pendaftaran ${pendaftaran} tidak ditemukan`,
+        `User dengan nomor id_pendaftaran ${id_pendaftaran} tidak ditemukan`,
       );
     }
     return deleted;
