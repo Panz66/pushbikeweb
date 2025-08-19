@@ -8,26 +8,32 @@ export default function ResultList() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  useEffect(() => {
-    getUsers()
-      .then((res) => setData(res.data as UserType[]))
-      .catch(() => alert("Gagal mengambil data peserta"));
-  }, []);
+ useEffect(() => {
+  getUsers()
+    .then(({ data }) => {
+      console.log("API response:", data);
+
+      if (Array.isArray(data)) {
+        setData(data);
+      } else {
+        console.error("Format response API tidak sesuai:", data);
+        setData([]);
+      }
+    })
+    .catch(() => alert("Gagal mengambil data peserta"));
+}, []);
 
   // Hitung ranking & kategori
   const processedData = useMemo(() => {
-    // 1. Hitung total point
     const withTotal = data.map((u, idx) => ({
       ...u,
       gate1: idx + 1,
-      gate2: ((idx + 5) % data.length) + 1, // 6-10, lalu 1-5 (kalau 10 peserta)
+      gate2: ((idx + 5) % data.length) + 1,
       total: u.point1 + u.point2,
     }));
 
-    // 2. Urutkan berdasarkan total point (kecil = ranking lebih tinggi)
     const sorted = [...withTotal].sort((a, b) => a.total - b.total);
 
-    // 3. Tambahkan ranking & kategori
     return sorted.map((u, idx) => {
       let category = "";
       if (idx + 1 <= 3) category = "Final Pro";
