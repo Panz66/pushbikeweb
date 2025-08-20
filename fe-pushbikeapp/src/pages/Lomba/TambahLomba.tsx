@@ -1,35 +1,35 @@
+// src/components/pages/Lomba/TambahLomba.tsx
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import LombaForm from "./LombaForm";
-
-type PesertaRow = {
-  id: number;
-  nama: string;
-  plat_number: string;
-  community: string;
-  point1: number;
-  point2: number;
-};
+import type { UserType } from "@/types/users";
 
 export default function TambahLomba() {
   const [formData, setFormData] = useState<any | null>(null);
-  const [batches, setBatches] = useState<PesertaRow[][]>([]);
+  const [batches, setBatches] = useState<UserType[][]>([]);
   const [showPesertaForm, setShowPesertaForm] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleFormSubmit = (data: any) => {
     setFormData(data);
 
     const jmlPeserta = Number(data.peserta);
-    let jumlahBatch = data.kategori === "kualifikasi" ? Number(data.batch) : 1;
+    const jumlahBatch = data.kategori === "kualifikasi" ? Number(data.batch) : 1;
 
-    const allBatches: PesertaRow[][] = [];
-    const pesertaPerBatch = Math.ceil(jmlPeserta / jumlahBatch);
+    const allBatches: UserType[][] = [];
+    const base = Math.floor(jmlPeserta / jumlahBatch);
+    const sisa = jmlPeserta % jumlahBatch;
+
     let pesertaId = 1;
 
     for (let b = 0; b < jumlahBatch; b++) {
-      const pesertaBatch: PesertaRow[] = [];
-      for (let i = 0; i < pesertaPerBatch && pesertaId <= jmlPeserta; i++) {
+      const sizeBatch = base + (b < sisa ? 1 : 0);
+      const pesertaBatch: UserType[] = [];
+
+      for (let i = 0; i < sizeBatch; i++) {
         pesertaBatch.push({
-          id: pesertaId,
+          id_pendaftaran: pesertaId,
           nama: `Peserta ${pesertaId}`,
           plat_number: "-",
           community: "-",
@@ -38,48 +38,30 @@ export default function TambahLomba() {
         });
         pesertaId++;
       }
+
       allBatches.push(pesertaBatch);
     }
 
     setBatches(allBatches);
   };
 
-  const handleInputPeserta = () => setShowPesertaForm(true);
-
   const handlePesertaChange = (
     batchIdx: number,
     id: number,
-    key: keyof PesertaRow,
+    key: keyof UserType,
     value: string | number
   ) => {
     const updatedBatches = [...batches];
     updatedBatches[batchIdx] = updatedBatches[batchIdx].map((p) =>
-      p.id === id ? { ...p, [key]: value } : p
+      p.id_pendaftaran === id ? { ...p, [key]: value } : p
     );
     setBatches(updatedBatches);
   };
 
-  const processBatch = (peserta: PesertaRow[]) => {
-    if (peserta.length === 0) return [];
-    const withTotal = peserta.map((u, idx) => ({
-      ...u,
-      gate1: idx + 1,
-      gate2: ((idx + 5) % peserta.length) + 1,
-      total: u.point1 + u.point2,
-    }));
-
-    const sorted = [...withTotal].sort((a, b) => b.total - a.total); // urut desc
-
-    return sorted.map((u, idx) => ({
-      ...u,
-      rank: idx + 1,
-      category:
-        idx + 1 <= 3
-          ? "Final Pro"
-          : idx + 1 <= 6
-          ? "Semi Final"
-          : "Rep",
-    }));
+  const handleTambahkanLomba = () => {
+    // simpan ke localStorage sementara (belum ada backend)
+    localStorage.setItem("lombaData", JSON.stringify(batches));
+    navigate("/result");
   };
 
   return (
@@ -92,133 +74,144 @@ export default function TambahLomba() {
             🏁 {formData.nama} ({formData.kategori}) - {formData.tanggal}
           </h2>
 
-          <button
-            className="mb-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-            onClick={handleInputPeserta}
-          >
-            Input Peserta
-          </button>
+          <div className="flex gap-3 mb-4">
+            <button
+              className="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700"
+              onClick={() => setShowPesertaForm(true)}
+            >
+              Input Peserta
+            </button>
+            <button
+              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+              onClick={handleTambahkanLomba}
+            >
+              Tambahkan Lomba
+            </button>
+          </div>
 
-          {batches.map((pesertaBatch, batchIdx) => {
-            const processedData = processBatch(pesertaBatch);
-
-            return (
-              <div key={batchIdx} className="mb-8">
-                {batches.length > 1 && (
-                  <h3 className="text-lg font-semibold mb-2">
-                    Batch {batchIdx + 1}
-                  </h3>
-                )}
-
-                <div className="overflow-x-auto rounded-lg shadow border">
-                  <table className="min-w-full text-sm text-left">
-                    <thead className="bg-gray-100 text-gray-700 uppercase">
-                      <tr>
-                        <th className="px-4 py-3 border">Gate Start Moto 1</th>
-                        <th className="px-4 py-3 border">Gate Start Moto 2</th>
-                        <th className="px-4 py-3 border">Nama Peserta</th>
-                        <th className="px-4 py-3 border">No Plat</th>
-                        <th className="px-4 py-3 border">Asal Komunitas</th>
-                        <th className="px-4 py-3 border">Point Moto 1</th>
-                        <th className="px-4 py-3 border">Point Moto 2</th>
-                        <th className="px-4 py-3 border">Total Point</th>
-                        <th className="px-4 py-3 border">Rank</th>
-                        <th className="px-4 py-3 border">Class Category</th>
+          {batches.map((pesertaBatch, batchIdx) => (
+            <div key={batchIdx} className="mb-8">
+              {batches.length > 1 && (
+                <h3 className="text-lg font-semibold mb-2">
+                  Batch {batchIdx + 1}
+                </h3>
+              )}
+              <div className="overflow-x-auto rounded-lg shadow border">
+                <table className="min-w-full text-sm text-left">
+                  <thead className="bg-gray-100 text-gray-700 uppercase">
+                    <tr>
+                      <th className="px-4 py-3 border">Nama Peserta</th>
+                      <th className="px-4 py-3 border">No Plat</th>
+                      <th className="px-4 py-3 border">Asal Komunitas</th>
+                      <th className="px-4 py-3 border text-center">Point 1</th>
+                      <th className="px-4 py-3 border text-center">Point 2</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pesertaBatch.map((u) => (
+                      <tr key={u.id_pendaftaran}>
+                        <td className="px-4 py-2 border">
+                          {showPesertaForm ? (
+                            <input
+                              type="text"
+                              value={u.nama}
+                              onChange={(e) =>
+                                handlePesertaChange(
+                                  batchIdx,
+                                  u.id_pendaftaran,
+                                  "nama",
+                                  e.target.value
+                                )
+                              }
+                              className="border rounded px-2 py-1 w-full"
+                            />
+                          ) : (
+                            u.nama
+                          )}
+                        </td>
+                        <td className="px-4 py-2 border">
+                          {showPesertaForm ? (
+                            <input
+                              type="text"
+                              value={u.plat_number}
+                              onChange={(e) =>
+                                handlePesertaChange(
+                                  batchIdx,
+                                  u.id_pendaftaran,
+                                  "plat_number",
+                                  e.target.value
+                                )
+                              }
+                              className="border rounded px-2 py-1 w-full"
+                            />
+                          ) : (
+                            u.plat_number
+                          )}
+                        </td>
+                        <td className="px-4 py-2 border">
+                          {showPesertaForm ? (
+                            <input
+                              type="text"
+                              value={u.community}
+                              onChange={(e) =>
+                                handlePesertaChange(
+                                  batchIdx,
+                                  u.id_pendaftaran,
+                                  "community",
+                                  e.target.value
+                                )
+                              }
+                              className="border rounded px-2 py-1 w-full"
+                            />
+                          ) : (
+                            u.community
+                          )}
+                        </td>
+                        <td className="px-4 py-2 border text-center">
+                          {showPesertaForm ? (
+                            <input
+                              type="number"
+                              value={u.point1}
+                              onChange={(e) =>
+                                handlePesertaChange(
+                                  batchIdx,
+                                  u.id_pendaftaran,
+                                  "point1",
+                                  Number(e.target.value)
+                                )
+                              }
+                              className="border rounded px-2 py-1 w-full text-center"
+                            />
+                          ) : (
+                            u.point1
+                          )}
+                        </td>
+                        <td className="px-4 py-2 border text-center">
+                          {showPesertaForm ? (
+                            <input
+                              type="number"
+                              value={u.point2}
+                              onChange={(e) =>
+                                handlePesertaChange(
+                                  batchIdx,
+                                  u.id_pendaftaran,
+                                  "point2",
+                                  Number(e.target.value)
+                                )
+                              }
+                              className="border rounded px-2 py-1 w-full text-center"
+                            />
+                          ) : (
+                            u.point2
+                          )}
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody className="text-gray-800">
-                      {processedData.map((u) => (
-                        <tr key={u.id} className="hover:bg-gray-50">
-                          <td className="px-4 py-2 border">{u.gate1}</td>
-                          <td className="px-4 py-2 border">{u.gate2}</td>
-                          <td className="px-4 py-2 border">
-                            {showPesertaForm ? (
-                              <input
-                                type="text"
-                                value={u.nama}
-                                onChange={(e) =>
-                                  handlePesertaChange(batchIdx, u.id, "nama", e.target.value)
-                                }
-                                className="border rounded px-2 py-1 w-full"
-                              />
-                            ) : (
-                              u.nama
-                            )}
-                          </td>
-                          <td className="px-4 py-2 border">
-                            {showPesertaForm ? (
-                              <input
-                                type="text"
-                                value={u.plat_number}
-                                onChange={(e) =>
-                                  handlePesertaChange(batchIdx, u.id, "plat_number", e.target.value)
-                                }
-                                className="border rounded px-2 py-1 w-full"
-                              />
-                            ) : (
-                              u.plat_number
-                            )}
-                          </td>
-                          <td className="px-4 py-2 border">
-                            {showPesertaForm ? (
-                              <input
-                                type="text"
-                                value={u.community}
-                                onChange={(e) =>
-                                  handlePesertaChange(batchIdx, u.id, "community", e.target.value)
-                                }
-                                className="border rounded px-2 py-1 w-full"
-                              />
-                            ) : (
-                              u.community
-                            )}
-                          </td>
-                          <td className="px-4 py-2 border text-center">
-                            {showPesertaForm ? (
-                              <input
-                                type="number"
-                                value={u.point1}
-                                onChange={(e) =>
-                                  handlePesertaChange(batchIdx, u.id, "point1", Number(e.target.value))
-                                }
-                                className="border rounded px-2 py-1 w-full text-center"
-                              />
-                            ) : (
-                              u.point1
-                            )}
-                          </td>
-                          <td className="px-4 py-2 border text-center">
-                            {showPesertaForm ? (
-                              <input
-                                type="number"
-                                value={u.point2}
-                                onChange={(e) =>
-                                  handlePesertaChange(batchIdx, u.id, "point2", Number(e.target.value))
-                                }
-                                className="border rounded px-2 py-1 w-full text-center"
-                              />
-                            ) : (
-                              u.point2
-                            )}
-                          </td>
-                          <td className="px-4 py-2 border text-center">{u.total}</td>
-                          <td className="px-4 py-2 border text-center font-bold">{u.rank}</td>
-                          <td className="px-4 py-2 border">{u.category}</td>
-                        </tr>
-                      ))}
-                      {processedData.length === 0 && (
-                        <tr>
-                          <td colSpan={10} className="text-center py-4 text-gray-500">
-                            Tidak ada peserta.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       )}
     </div>
