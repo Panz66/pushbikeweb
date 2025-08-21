@@ -1,109 +1,48 @@
-// src/components/pages/LiveResult/ResultList.tsx
-import { useEffect, useState, useMemo } from "react";
-import type { UserType } from "@/types/users";
+import { useNavigate } from "react-router-dom";
 
 export default function ResultList() {
-  const [batches, setBatches] = useState<UserType[][]>([]);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const data = localStorage.getItem("lombaData");
-    if (data) setBatches(JSON.parse(data));
-  }, []);
-
-  // hitung rank tiap batch
-  const processedBatches = useMemo(() => {
-    return batches.map((batch) => {
-      const withTotal = batch.map((u) => ({
-        ...u,
-        total: u.point1 + u.point2,
-      }));
-      return withTotal.sort((a, b) => a.total - b.total).map((u, idx) => ({
-        ...u,
-        rank: idx + 1,
-      }));
-    });
-  }, [batches]);
-
-  // semifinals: gabungkan pair of batches → ambil top 5
-  const semifinals = useMemo(() => {
-    const result: UserType[][] = [];
-    for (let i = 0; i < processedBatches.length; i += 2) {
-      const merged = [
-        ...(processedBatches[i] || []),
-        ...(processedBatches[i + 1] || []),
-      ]
-        .sort((a, b) => a.total - b.total)
-        .slice(0, 5)
-        .map((u, idx) => ({ ...u, rank: idx + 1 }));
-      result.push(merged);
-    }
-    return result;
-  }, [processedBatches]);
-
-  // final: ambil semua semifinal → top 5
-  const final = useMemo(() => {
-    return semifinals
-      .flat()
-      .sort((a, b) => a.total - b.total)
-      .slice(0, 5)
-      .map((u, idx) => ({ ...u, rank: idx + 1 }));
-  }, [semifinals]);
-
-  const Table = ({ data, title }: { data: UserType[]; title: string }) => (
-    <div className="w-full mt-6">
-      <h3 className="text-lg font-bold mb-2">{title}</h3>
-      <div className="overflow-x-auto rounded-lg shadow border">
-        <table className="min-w-full text-sm text-left">
-          <thead className="bg-gray-100 text-gray-700 uppercase">
-            <tr>
-              <th className="px-4 py-3 border">Nama Peserta</th>
-              <th className="px-4 py-3 border">No Plat</th>
-              <th className="px-4 py-3 border">Komunitas</th>
-              <th className="px-4 py-3 border text-center">Point 1</th>
-              <th className="px-4 py-3 border text-center">Point 2</th>
-              <th className="px-4 py-3 border text-center">Total</th>
-              <th className="px-4 py-3 border text-center">Rank</th>
-            </tr>
-          </thead>
-          <tbody className="text-gray-800">
-            {data.length === 0 ? (
-              <tr>
-                <td colSpan={7} className="text-center py-4 text-gray-500">
-                  Tidak ada data
-                </td>
-              </tr>
-            ) : (
-              data.map((u) => (
-                <tr key={u.id_pendaftaran} className="hover:bg-gray-50">
-                  <td className="px-4 py-2 border">{u.nama}</td>
-                  <td className="px-4 py-2 border">{u.plat_number}</td>
-                  <td className="px-4 py-2 border">{u.community}</td>
-                  <td className="px-4 py-2 border text-center">{u.point1}</td>
-                  <td className="px-4 py-2 border text-center">{u.point2}</td>
-                  <td className="px-4 py-2 border text-center">{u.total}</td>
-                  <td className="px-4 py-2 border text-center font-bold">{u.rank}</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+  // Dummy lomba (nanti ganti fetch API)
+  const lombaList = [
+    { id: 1, name: "Push Bike Cup 2024", date: "20 Agustus 2024" },
+    { id: 2, name: "Push Bike Championship 2024", date: "15 September 2024" },
+    { id: 3, name: "Push Bike Fun Race 2025", date: "2 Januari 2025" },
+  ];
 
   return (
-    <div className="w-full p-6">
-      <h2 className="text-xl font-bold mb-4">🏁 Live Race Result</h2>
+    <div className="p-6 max-w-5xl mx-auto">
+      <h1 className="text-3xl font-bold text-indigo-600 mb-6 text-center">
+        Pilih Lomba untuk Melihat Hasil 🚴
+      </h1>
 
-      {processedBatches.map((batch, idx) => (
-        <Table key={idx} data={batch} title={`Batch ${idx + 1}`} />
-      ))}
-
-      {semifinals.map((semi, idx) => (
-        <Table key={`semi-${idx}`} data={semi} title={`Semifinal ${idx + 1} (Top 5)`} />
-      ))}
-
-      <Table data={final} title="Final (Top 5 dari semua semifinal)" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {lombaList.map((lomba) => (
+          <div
+            key={lomba.id}
+            className="bg-white shadow-lg rounded-xl p-6 flex flex-col justify-between hover:shadow-xl transition"
+          >
+            <div>
+              <h2 className="text-xl font-semibold text-gray-800">{lomba.name}</h2>
+              <p className="text-gray-500 text-sm">{lomba.date}</p>
+            </div>
+            <div className="flex gap-3 mt-4">
+              <button
+                onClick={() => navigate(`/live/${lomba.id}/girl`)}
+                className="flex-1 bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg shadow"
+              >
+                Girl
+              </button>
+              <button
+                onClick={() => navigate(`/live/${lomba.id}/boy`)}
+                className="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow"
+              >
+                Boy
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
