@@ -46,25 +46,29 @@ export default function Registrasi() {
     console.log("Data dikirim:", { lomba: selectedLomba, user: newUser });
     // TODO: axios.post("/users", { lomba: selectedLomba, ...newUser })
 
-    setSelectedLomba(null); // tutup modal
-    setFormData({ nama: "", plat_number: "", community: "" }); // reset form
-    navigate("/hasil-live"); // redirect ke halaman hasil
+    setSelectedLomba(null);
+    setFormData({ nama: "", plat_number: "", community: "" });
+    navigate("/hasil-live");
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <h1 className="text-3xl font-bold text-center mb-8">Pilih Lomba</h1>
+    <div className="min-h-screen bg-[#222831] p-6 font-poppins">
+      <h1 className="text-3xl font-bold text-center mb-8 text-[#00ADB5]">
+        Pilih Lomba
+      </h1>
 
       {/* Card Lomba */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {lombaList.map((lomba) => (
           <div
             key={lomba.id}
-            className="bg-white shadow-md rounded-xl p-6 cursor-pointer hover:shadow-lg transition"
+            className="bg-[#393E46] border border-[#222831] shadow-sm rounded-2xl p-6 cursor-pointer hover:shadow-lg hover:border-[#00ADB5] transition"
             onClick={() => setSelectedLomba(lomba)}
           >
-            <h2 className="text-xl font-semibold">{lomba.nama}</h2>
-            <p className="text-gray-600 mt-2">{lomba.deskripsi}</p>
+            <h2 className="text-xl font-semibold text-[#EEEEEE]">
+              {lomba.nama}
+            </h2>
+            <p className="text-[#EEEEEE] mt-2">{lomba.deskripsi}</p>
           </div>
         ))}
       </div>
@@ -72,59 +76,59 @@ export default function Registrasi() {
       {/* Modal Form */}
       {selectedLomba && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-xl shadow-lg w-full max-w-md p-6 relative">
+          <div className="bg-[#393E46] rounded-2xl shadow-lg w-full max-w-md p-6 relative">
             {/* Tombol Close */}
             <button
-              className="absolute top-3 right-3 text-gray-600 hover:text-red-500"
+              className="absolute top-3 right-3 text-[#EEEEEE] hover:text-[#00ADB5] transition"
               onClick={() => setSelectedLomba(null)}
             >
               ✖
             </button>
 
-            <h2 className="text-2xl font-bold mb-4 text-center">
+            <h2 className="text-2xl font-bold mb-6 text-center text-[#00ADB5]">
               Registrasi {selectedLomba.nama}
             </h2>
 
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label className="block text-gray-700">Nama</label>
+                <label className="block text-[#EEEEEE] font-medium">Nama</label>
                 <input
                   type="text"
                   name="nama"
                   value={formData.nama}
                   onChange={handleChange}
-                  className="w-full mt-1 p-2 border rounded-lg"
+                  className="w-full mt-1 p-2 bg-[#222831] text-[#EEEEEE] border border-[#00ADB5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00ADB5]"
                   required
                 />
               </div>
 
               <div className="mb-4">
-                <label className="block text-gray-700">Plat Number</label>
+                <label className="block text-[#EEEEEE] font-medium">Plat Number</label>
                 <input
                   type="text"
                   name="plat_number"
                   value={formData.plat_number}
                   onChange={handleChange}
-                  className="w-full mt-1 p-2 border rounded-lg"
+                  className="w-full mt-1 p-2 bg-[#222831] text-[#EEEEEE] border border-[#00ADB5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00ADB5]"
                   required
                 />
               </div>
 
               <div className="mb-6">
-                <label className="block text-gray-700">Community</label>
+                <label className="block text-[#EEEEEE] font-medium">Community</label>
                 <input
                   type="text"
                   name="community"
                   value={formData.community}
                   onChange={handleChange}
-                  className="w-full mt-1 p-2 border rounded-lg"
+                  className="w-full mt-1 p-2 bg-[#222831] text-[#EEEEEE] border border-[#00ADB5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00ADB5]"
                   required
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition"
+                className="w-full bg-[#00ADB5] hover:bg-[#EEEEEE] hover:text-[#222831] text-white font-semibold p-3 rounded-lg shadow-md transition"
               >
                 Daftar
               </button>

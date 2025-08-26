@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 export default function ResultList() {
   const navigate = useNavigate();
 
-  // Dummy lomba (nanti ganti fetch API)
   const lombaList = [
     { id: 1, name: "Push Bike Cup 2024", date: "20 Agustus 2024" },
     { id: 2, name: "Push Bike Championship 2024", date: "15 September 2024" },
@@ -11,8 +10,8 @@ export default function ResultList() {
   ];
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold text-indigo-600 mb-6 text-center">
+    <div className="p-6 max-w-5xl mx-auto bg-[#222831] min-h-screen font-poppins">
+      <h1 className="text-3xl font-bold text-[#00ADB5] mb-6 text-center">
         Pilih Lomba untuk Melihat Hasil 🚴
       </h1>
 
@@ -20,22 +19,24 @@ export default function ResultList() {
         {lombaList.map((lomba) => (
           <div
             key={lomba.id}
-            className="bg-white shadow-lg rounded-xl p-6 flex flex-col justify-between hover:shadow-xl transition"
+            className="bg-[#393E46] shadow-lg rounded-xl p-6 flex flex-col justify-between hover:shadow-xl transition"
           >
             <div>
-              <h2 className="text-xl font-semibold text-gray-800">{lomba.name}</h2>
-              <p className="text-gray-500 text-sm">{lomba.date}</p>
+              <h2 className="text-xl font-semibold text-[#EEEEEE]">
+                {lomba.name}
+              </h2>
+              <p className="text-gray-300 text-sm">{lomba.date}</p>
             </div>
             <div className="flex gap-3 mt-4">
               <button
                 onClick={() => navigate(`/live/${lomba.id}/girl`)}
-                className="flex-1 bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg shadow"
+                className="flex-1 bg-[#EC4899] hover:bg-[#BE185D] text-[#EEEEEE] px-4 py-2 rounded-lg shadow transition"
               >
                 Girl
               </button>
               <button
                 onClick={() => navigate(`/live/${lomba.id}/boy`)}
-                className="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow"
+                className="flex-1 bg-[#00ADB5] hover:bg-[#019ca4] text-[#EEEEEE] px-4 py-2 rounded-lg shadow transition"
               >
                 Boy
               </button>

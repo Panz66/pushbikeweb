@@ -1,109 +1,158 @@
-// src/components/pages/LiveResult/ResultList.tsx
-import { useEffect, useState, useMemo } from "react";
-import type { UserType } from "@/types/users";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { createUser } from '@/services/api';
+import type { UserType } from '@/types/users';
 
-export default function LiveResult() {
-  const [batches, setBatches] = useState<UserType[][]>([]);
+const initialForm: UserType = {
+  id_pendaftaran: 0,
+  nama: '',
+  plat_number: '',
+  community: '',
+  point1: 0,
+  point2: 0,
+  email: '',
+};
 
-  useEffect(() => {
-    const data = localStorage.getItem("lombaData");
-    if (data) setBatches(JSON.parse(data));
-  }, []);
+export default function UserForm() {
+  const [form, setForm] = useState<UserType>(initialForm);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  // hitung rank tiap batch
-  const processedBatches = useMemo(() => {
-    return batches.map((batch) => {
-      const withTotal = batch.map((u) => ({
-        ...u,
-        total: u.point1 + u.point2,
-      }));
-      return withTotal.sort((a, b) => a.total - b.total).map((u, idx) => ({
-        ...u,
-        rank: idx + 1,
-      }));
-    });
-  }, [batches]);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]:
+        name === 'id_pendaftaran' || name === 'point1' || name === 'point2'
+          ? Number(value)
+          : value,
+    }));
+  };
 
-  // semifinals: gabungkan pair of batches → ambil top 5
-  const semifinals = useMemo(() => {
-    const result: UserType[][] = [];
-    for (let i = 0; i < processedBatches.length; i += 2) {
-      const merged = [
-        ...(processedBatches[i] || []),
-        ...(processedBatches[i + 1] || []),
-      ]
-        .sort((a, b) => a.total - b.total)
-        .slice(0, 5)
-        .map((u, idx) => ({ ...u, rank: idx + 1 }));
-      result.push(merged);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await createUser({
+        nama: form.nama,
+        plat_number: form.plat_number,
+        community: form.community,
+        point1: form.point1 || undefined,
+        point2: form.point2 || undefined,
+        email: form.email,
+      });
+      navigate('/result');
+    } catch (err) {
+      alert('Gagal menyimpan data User');
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
-    return result;
-  }, [processedBatches]);
-
-  // final: ambil semua semifinal → top 5
-  const final = useMemo(() => {
-    return semifinals
-      .flat()
-      .sort((a, b) => a.total - b.total)
-      .slice(0, 5)
-      .map((u, idx) => ({ ...u, rank: idx + 1 }));
-  }, [semifinals]);
-
-  const Table = ({ data, title }: { data: UserType[]; title: string }) => (
-    <div className="w-full mt-6">
-      <h3 className="text-lg font-bold mb-2">{title}</h3>
-      <div className="overflow-x-auto rounded-lg shadow border">
-        <table className="min-w-full text-sm text-left">
-          <thead className="bg-gray-100 text-gray-700 uppercase">
-            <tr>
-              <th className="px-4 py-3 border">Nama Peserta</th>
-              <th className="px-4 py-3 border">No Plat</th>
-              <th className="px-4 py-3 border">Komunitas</th>
-              <th className="px-4 py-3 border text-center">Point 1</th>
-              <th className="px-4 py-3 border text-center">Point 2</th>
-              <th className="px-4 py-3 border text-center">Total</th>
-              <th className="px-4 py-3 border text-center">Rank</th>
-            </tr>
-          </thead>
-          <tbody className="text-gray-800">
-            {data.length === 0 ? (
-              <tr>
-                <td colSpan={7} className="text-center py-4 text-gray-500">
-                  Tidak ada data
-                </td>
-              </tr>
-            ) : (
-              data.map((u) => (
-                <tr key={u.id_pendaftaran} className="hover:bg-gray-50">
-                  <td className="px-4 py-2 border">{u.nama}</td>
-                  <td className="px-4 py-2 border">{u.plat_number}</td>
-                  <td className="px-4 py-2 border">{u.community}</td>
-                  <td className="px-4 py-2 border text-center">{u.point1}</td>
-                  <td className="px-4 py-2 border text-center">{u.point2}</td>
-                  <td className="px-4 py-2 border text-center">{u.total}</td>
-                  <td className="px-4 py-2 border text-center font-bold">{u.rank}</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+  };
 
   return (
-    <div className="w-full p-6">
-      <h2 className="text-xl font-bold mb-4">🏁 Live Race Result</h2>
+    <div className="min-h-screen bg-[#222831] p-8 font-poppins">
+      <div className="w-full max-w-4xl mx-auto bg-[#393E46] p-8 rounded-xl shadow-lg mt-6">
+        <h1 className="text-2xl font-bold mb-6 text-[#EEEEEE]">Tambah User</h1>
 
-      {processedBatches.map((batch, idx) => (
-        <Table key={idx} data={batch} title={`Batch ${idx + 1}`} />
-      ))}
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6 text-[#EEEEEE]"
+        >
+          {/* Nama */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Nama</label>
+            <input
+              name="nama"
+              type="text"
+              value={form.nama}
+              onChange={handleChange}
+              required
+              className="w-full px-3 py-2 border border-[#EEEEEE] rounded bg-transparent text-[#EEEEEE] focus:outline-none focus:border-[#00ADB5]"
+            />
+          </div>
 
-      {semifinals.map((semi, idx) => (
-        <Table key={`semi-${idx}`} data={semi} title={`Semifinal ${idx + 1} (Top 5)`} />
-      ))}
+          {/* Email */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Email</label>
+            <input
+              name="email"
+              type="email"
+              value={form.email}
+              onChange={handleChange}
+              required
+              className="w-full px-3 py-2 border border-[#EEEEEE] rounded bg-transparent text-[#EEEEEE] focus:outline-none focus:border-[#00ADB5]"
+            />
+          </div>
 
-      <Table data={final} title="Final (Top 5 dari semua semifinal)" />
+          {/* Plat Number */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Plat Number</label>
+            <input
+              name="plat_number"
+              type="text"
+              value={form.plat_number}
+              onChange={handleChange}
+              required
+              className="w-full px-3 py-2 border border-[#EEEEEE] rounded bg-transparent text-[#EEEEEE] focus:outline-none focus:border-[#00ADB5]"
+            />
+          </div>
+
+          {/* Community */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Community</label>
+            <input
+              name="community"
+              type="text"
+              value={form.community}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-[#EEEEEE] rounded bg-transparent text-[#EEEEEE] focus:outline-none focus:border-[#00ADB5]"
+            />
+          </div>
+
+          {/* Point 1 */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Point 1</label>
+            <input
+              name="point1"
+              type="number"
+              value={form.point1}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-[#EEEEEE] rounded bg-transparent text-[#EEEEEE] focus:outline-none focus:border-[#00ADB5] no-spinner"
+            />
+          </div>
+
+          {/* Point 2 */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Point 2</label>
+            <input
+              name="point2"
+              type="number"
+              value={form.point2}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-[#EEEEEE] rounded bg-transparent text-[#EEEEEE] focus:outline-none focus:border-[#00ADB5] no-spinner"
+            />
+          </div>
+
+          {/* Buttons */}
+          <div className="md:col-span-2 flex justify-between mt-4">
+            <button
+              type="submit"
+              className="bg-[#00ADB5] hover:bg-[#EEEEEE] hover:text-[#222831] text-white px-6 py-2 rounded transition"
+              disabled={loading}
+            >
+              {loading ? 'Menyimpan...' : 'Simpan'}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate('/result')}
+              className="text-sm text-[#EEEEEE] hover:text-[#00ADB5] transition"
+            >
+              Batal / Kembali
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
