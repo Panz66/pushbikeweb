@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/components/pages/Lomba/TambahLomba.tsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";

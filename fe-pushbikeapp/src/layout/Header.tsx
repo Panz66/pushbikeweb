@@ -1,11 +1,15 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { FiMenu, FiX } from "react-icons/fi";
 import logo from "@/assets/img/logo.png";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const toggleMenu = () => setMenuOpen(!menuOpen);
+  const location = useLocation();
+
+  // cek apakah sedang di halaman login admin
+  const isLoginPage = location.pathname === "/admindashboard";
 
   return (
     <header className="w-full bg-[#222831] shadow-md border-b border-[#393E46] sticky top-0 z-50 font-poppins">
@@ -19,69 +23,101 @@ export default function Header() {
         </Link>
 
         {/* Navbar Desktop */}
-        <nav className="hidden md:flex">
-          <ul className="flex space-x-6 text-[#EEEEEE] font-medium items-center">
+        {!isLoginPage && (
+          <nav className="hidden md:flex">
+            <ul className="flex space-x-6 text-[#EEEEEE] font-medium items-center">
+              <li>
+                <Link
+                  to="/registrasi"
+                  className="hover:text-[#00ADB5] transition"
+                >
+                  Registrasi
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/resultlist"
+                  className="hover:text-[#00ADB5] transition"
+                >
+                  Hasil Live
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/tentangkami"
+                  className="hover:text-[#00ADB5] transition"
+                >
+                  Tentang Kami
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/kontak"
+                  className="hover:text-[#00ADB5] transition"
+                >
+                  Kontak
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/loginadmin"
+                  className="px-4 py-2 bg-[#00ADB5] text-[#EEEEEE] rounded-lg hover:bg-[#393E46] transition"
+                >
+                  Login Admin
+                </Link>
+              </li>
+            </ul>
+          </nav>
+        )}
+
+        {/* Mobile Toggle */}
+        {!isLoginPage && (
+          <button
+            onClick={toggleMenu}
+            className="md:hidden text-2xl text-[#EEEEEE] focus:outline-none"
+          >
+            {menuOpen ? <FiX /> : <FiMenu />}
+          </button>
+        )}
+      </div>
+
+      {/* Navbar Mobile */}
+      {menuOpen && !isLoginPage && (
+        <nav className="md:hidden bg-[#222831] border-t border-[#393E46] shadow-md">
+          <ul className="flex flex-col space-y-4 p-6 text-[#EEEEEE] font-medium">
             <li>
-              <Link to="/registrasi" className="hover:text-[#00ADB5] transition">
+              <Link
+                to="/registrasi"
+                onClick={toggleMenu}
+                className="hover:text-[#00ADB5] transition"
+              >
                 Registrasi
-              </Link>
-            </li>
-            <li>
-              <Link to="/resultlist" className="hover:text-[#00ADB5] transition">
-                Hasil Live
-              </Link>
-            </li>
-            <li>
-              <Link to="/tentangkami" className="hover:text-[#00ADB5] transition">
-                Tentang Kami
-              </Link>
-            </li>
-            <li>
-              <Link to="/kontak" className="hover:text-[#00ADB5] transition">
-                Kontak
               </Link>
             </li>
             <li>
               <Link
-                to="/loginadmin"
-                className="px-4 py-2 bg-[#00ADB5] text-[#EEEEEE] rounded-lg hover:bg-[#393E46] transition"
+                to="/resultlist"
+                onClick={toggleMenu}
+                className="hover:text-[#00ADB5] transition"
               >
-                Login Admin
-              </Link>
-            </li>
-          </ul>
-        </nav>
-
-        {/* Mobile Toggle */}
-        <button
-          onClick={toggleMenu}
-          className="md:hidden text-2xl text-[#EEEEEE] focus:outline-none"
-        >
-          {menuOpen ? <FiX /> : <FiMenu />}
-        </button>
-      </div>
-
-      {/* Navbar Mobile */}
-      {menuOpen && (
-        <nav className="md:hidden bg-[#222831] border-t border-[#393E46] shadow-md">
-          <ul className="flex flex-col space-y-4 p-6 text-[#EEEEEE] font-medium">
-            <li>
-              <Link to="/registrasi" onClick={toggleMenu} className="hover:text-[#00ADB5] transition">
-                Registrasi
-              </Link>
-            </li>
-            <li>
-              <Link to="/resultlist" onClick={toggleMenu} className="hover:text-[#00ADB5] transition">
                 Hasil Live
               </Link>
             </li>
             <li>
-              <Link to="/tentangkami" onClick={toggleMenu} className="hover:text-[#00ADB5] transition">
+              <Link
+                to="/tentangkami"
+                onClick={toggleMenu}
+                className="hover:text-[#00ADB5] transition"
+              >
                 Tentang Kami
               </Link>
             </li>
             <li>
-              <Link to="/kontak" onClick={toggleMenu} className="hover:text-[#00ADB5] transition">
+              <Link
+                to="/kontak"
+                onClick={toggleMenu}
+                className="hover:text-[#00ADB5] transition"
+              >
                 Kontak
               </Link>
             </li>

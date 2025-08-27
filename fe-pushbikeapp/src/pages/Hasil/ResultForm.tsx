@@ -1,10 +1,11 @@
+// src/pages/UserForm.tsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createUser } from '@/services/api';
+import { createUser } from '@/services/users';
 import type { UserType } from '@/types/users';
 
 const initialForm: UserType = {
-  id_pendaftaran: 0,
+  id_pendaftaran: 0, // backend auto-generate
   nama: '',
   plat_number: '',
   community: '',
@@ -52,8 +53,10 @@ export default function UserForm() {
 
   return (
     <div className="min-h-screen bg-[#222831] p-8 font-poppins">
-      <div className="w-full max-w-4xl mx-auto bg-[#393E46] p-8 rounded-xl shadow-lg mt-6">
-        <h1 className="text-2xl font-bold mb-6 text-[#EEEEEE]">Tambah User</h1>
+      <div className="w-full max-w-4xl mx-auto bg-[#393E46] p-8 rounded-2xl shadow-lg mt-6">
+        <h1 className="text-3xl font-bold mb-6 text-[#EEEEEE]">
+          Tambah User
+        </h1>
 
         <form
           onSubmit={handleSubmit}
@@ -68,7 +71,7 @@ export default function UserForm() {
               value={form.nama}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-[#EEEEEE] rounded bg-transparent text-[#EEEEEE] focus:outline-none focus:border-[#00ADB5]"
+              className="w-full px-3 py-2 border border-[#EEEEEE]/40 rounded-lg bg-transparent text-[#EEEEEE] focus:outline-none focus:border-[#00ADB5]"
             />
           </div>
 
@@ -81,7 +84,7 @@ export default function UserForm() {
               value={form.email}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-[#EEEEEE] rounded bg-transparent text-[#EEEEEE] focus:outline-none focus:border-[#00ADB5]"
+              className="w-full px-3 py-2 border border-[#EEEEEE]/40 rounded-lg bg-transparent text-[#EEEEEE] focus:outline-none focus:border-[#00ADB5]"
             />
           </div>
 
@@ -94,7 +97,7 @@ export default function UserForm() {
               value={form.plat_number}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-[#EEEEEE] rounded bg-transparent text-[#EEEEEE] focus:outline-none focus:border-[#00ADB5]"
+              className="w-full px-3 py-2 border border-[#EEEEEE]/40 rounded-lg bg-transparent text-[#EEEEEE] focus:outline-none focus:border-[#00ADB5]"
             />
           </div>
 
@@ -106,7 +109,7 @@ export default function UserForm() {
               type="text"
               value={form.community}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-[#EEEEEE] rounded bg-transparent text-[#EEEEEE] focus:outline-none focus:border-[#00ADB5]"
+              className="w-full px-3 py-2 border border-[#EEEEEE]/40 rounded-lg bg-transparent text-[#EEEEEE] focus:outline-none focus:border-[#00ADB5]"
             />
           </div>
 
@@ -118,7 +121,7 @@ export default function UserForm() {
               type="number"
               value={form.point1}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-[#EEEEEE] rounded bg-transparent text-[#EEEEEE] focus:outline-none focus:border-[#00ADB5] no-spinner"
+              className="w-full px-3 py-2 border border-[#EEEEEE]/40 rounded-lg bg-transparent text-[#EEEEEE] focus:outline-none focus:border-[#00ADB5] no-spinner"
             />
           </div>
 
@@ -130,16 +133,16 @@ export default function UserForm() {
               type="number"
               value={form.point2}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-[#EEEEEE] rounded bg-transparent text-[#EEEEEE] focus:outline-none focus:border-[#00ADB5] no-spinner"
+              className="w-full px-3 py-2 border border-[#EEEEEE]/40 rounded-lg bg-transparent text-[#EEEEEE] focus:outline-none focus:border-[#00ADB5] no-spinner"
             />
           </div>
 
           {/* Buttons */}
-          <div className="md:col-span-2 flex justify-between mt-4">
+          <div className="md:col-span-2 flex justify-between mt-6">
             <button
               type="submit"
-              className="bg-[#00ADB5] hover:bg-[#EEEEEE] hover:text-[#222831] text-white px-6 py-2 rounded transition"
               disabled={loading}
+              className="bg-[#00ADB5] hover:bg-[#EEEEEE] hover:text-[#222831] text-white font-medium px-6 py-2 rounded-lg transition disabled:opacity-50"
             >
               {loading ? 'Menyimpan...' : 'Simpan'}
             </button>
