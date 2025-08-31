@@ -6,6 +6,9 @@ export default {
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],
       },
+      animation:{
+        "spin-slow": "spin 1s linear infinite",
+      }
     }
   },
   plugins: [],

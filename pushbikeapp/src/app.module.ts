@@ -7,6 +7,7 @@ import { User } from './users/entities/user.entity';
 import { EmailModule } from './email/email.module';
 import { LombaModule } from './lomba/lomba.module';
 import { PesertaModule } from './peserta/peserta.module';
+import { BatchModule } from './batch/batch.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { PesertaModule } from './peserta/peserta.module';
     EmailModule,
     LombaModule,
     PesertaModule,
+    BatchModule,
   ],
 })
 export class AppModule {}

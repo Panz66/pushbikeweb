@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { IsNotEmpty, IsString, IsDateString, IsInt, Min, IsEnum } from 'class-validator';
-import * as lombaEntity from '../entities/lomba.entity';
+import { Kategori } from '../entities/lomba.entity';
 
 export class CreateLombaDto {
   @IsString()
@@ -18,6 +18,6 @@ export class CreateLombaDto {
   @Min(0)
   biaya: number;
 
-  @IsEnum(['boy','girl'])
-  kategori: lombaEntity.Kategori;
+  @IsEnum(Kategori, { message: 'kategori must be boy or girl' })
+  kategori: Kategori;
 }

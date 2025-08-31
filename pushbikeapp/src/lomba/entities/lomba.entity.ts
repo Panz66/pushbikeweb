@@ -2,6 +2,7 @@
 /* eslint-disable prettier/prettier */
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Peserta } from '../../peserta/entities/peserta.entity'
+import {Batch} from '../../batch/entities/batch.entity'
 
 // src/lomba/entities/lomba.entity.ts
 export enum Kategori {
@@ -30,6 +31,14 @@ export class Lomba {
   @Column({ type: 'enum', enum: ['boy','girl'], default: 'boy' })
   kategori: Kategori;
 
+  // src/lomba/entities/lomba.entity.ts
+  @Column({ type: 'int', nullable: true })
+  jumlahBatch?: number;
+
+
   @OneToMany(() => Peserta, peserta => peserta.lomba)
   peserta: Peserta[];
+
+  @OneToMany(() => Batch, (batch) => batch.lomba, { cascade: true })
+  batch: Batch[];
 }

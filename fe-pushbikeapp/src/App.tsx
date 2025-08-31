@@ -15,6 +15,8 @@ import DaftarPeserta from './pages/Peserta/DaftarPeserta';
 import DaftarLomba from './pages/Lomba/DaftarLomba';
 import KelolaLomba from './pages/Lomba/KelolaLomba';
 import Statistik from './pages/Statistik';
+import DataOlahan from './pages/Peserta/DataOlahan';
+import KelolaPesertaLomba from './pages/Peserta/KelolaPeserta';
 
 function App() {
   return (
@@ -34,9 +36,17 @@ function App() {
 
           {/* Nested route di bawah dashboard */}
           <Route path="/admindashboard/tambahLomba" element={<TambahLomba />} />
+
           <Route path="/admindashboard/daftarpeserta" element={<DaftarPeserta />} />
+
           <Route path="/admindashboard/daftarlomba" element={<DaftarLomba />} />
+
           <Route path="/admindashboard/kelolalomba" element={<KelolaLomba />} />
+
+          <Route path="/admindashboard/kelolapeserta/:id" element={<KelolaPesertaLomba />} />
+
+          <Route path="/admindashboard/dataolahan" element={<DataOlahan />} />
+
           <Route path="/admindashboard/statistik" element={<Statistik />} />
 
           {/* Nested route untuk Result */}

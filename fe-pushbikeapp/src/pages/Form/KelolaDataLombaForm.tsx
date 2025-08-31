@@ -19,11 +19,13 @@ export default function KelolaDataLombaModal({ lomba, onClose }: KelolaDataLomba
 
     setLoading(true);
     try {
-      await api.post(`/lomba/${lomba.id}/batch`, { jumlahBatch: batchCount });
+      // 🔹 ganti dari POST -> PATCH
+      await api.patch(`/lomba/${lomba.id}/batch`, { jumlahBatch: batchCount });
+
       alert(`Peserta lomba "${lomba.nama}" berhasil dibagi ke ${batchCount} batch.`);
       onClose();
     } catch (err) {
-      console.error(err);
+      console.error("API Error:", err);
       alert("Gagal menyimpan batch.");
     } finally {
       setLoading(false);
